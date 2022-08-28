@@ -35,9 +35,6 @@ function App() {
   const handleChange = (event) => {
     getBase64(event.target.files[0], (base64) => {
       setVideoSrc(() => base64);
-      if (!videoRef.current.className.includes("h-screen")) {
-        videoRef.current.className = "h-screen opacity-0";
-      }
     });
     setTimeout(() => {
       initAalib();
@@ -46,17 +43,24 @@ function App() {
   };
 
   return (
-    <div className="flex">
-      <input type="file" name="file" onChange={handleChange} />
-      <canvas id="video-scene" />
-      <video
-        loop
-        controls
-        src={videoSrc}
-        className="opacity-0"
-        ref={videoRef}
-      />
-    </div>
+    <>
+      <div className="flex justify-center items-center">
+        <canvas id="video-scene" />
+        <video
+          loop
+          controls
+          src={videoSrc}
+          ref={videoRef}
+          className="h-screen opacity-0 absolute left-1/2 select-none -translate-x-1/2 -z-10"
+        />
+        <input
+          type="file"
+          name="file"
+          onChange={handleChange}
+          className="opacity-0 absolute inset-0 cursor-pointer"
+        />
+      </div>
+    </>
   );
 }
 
