@@ -5,7 +5,7 @@ function App() {
   const videoRef = useRef(null);
   const [videoSrc, setVideoSrc] = useState("");
 
-  const initAalib = useCallback(() => {
+  const initAalibVideo = useCallback(() => {
     const videoWidth = document.querySelector("video").offsetWidth;
     const videoHeight = document.querySelector("video").offsetHeight;
     const aspectRatio = {
@@ -26,20 +26,41 @@ function App() {
       .subscribe();
   }, []);
 
+  const initAalibImage = useCallback((src) => {
+    aalib.read.image
+      .fromURL(src)
+      .map(aalib.aa({ width: 520, height: 143, colored: true }))
+      .map(aalib.filter.inverse())
+      .map(
+        aalib.render.html({
+          background: "#000",
+          fontFamily: "Ubuntu Mono, monospace",
+        })
+      )
+      .do(function (el) {
+        document.body.appendChild(el);
+      })
+      .subscribe();
+  }, []);
+
   const getBase64 = useCallback((file, callback) => {
     const reader = new FileReader();
     reader.addEventListener("load", () => callback(reader.result));
     reader.readAsDataURL(file);
   }, []);
 
-  const handleChange = (event) => {
-    getBase64(event.target.files[0], (base64) => {
-      setVideoSrc(() => base64);
+  const handleChange = async (event) => {
+    await getBase64(event.target.files[0], (base64) => {
+      if (base64.includes("data:image")) {
+        initAalibImage(base64);
+      } else {
+        setVideoSrc(() => base64);
+        setTimeout(() => {
+          initAalibVideo();
+          videoRef.current.play();
+        }, 200);
+      }
     });
-    setTimeout(() => {
-      initAalib();
-      videoRef.current.play();
-    }, 200);
   };
 
   return (
