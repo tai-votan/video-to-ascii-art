@@ -24,4 +24,6 @@ pre {
   text-align: center;
   font-family: Ubuntu Mono, monospace !important;
   text-rendering: optimizeSpeed;
+  margin-top: -150px;
+  line-height: 7px;
 }
